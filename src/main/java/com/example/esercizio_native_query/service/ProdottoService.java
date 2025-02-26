@@ -59,6 +59,11 @@ public class ProdottoService {
         return prodottoRepository.findByPrezzoLessThan(prezzo);
     }
 
+    // metodo che restituisce prodotti ordinati per prezzo
+    public List<Prodotto> orderByPrezzo(Double prezzo){
+        return prodottoRepository.findByPrezzoOrderByPrezzoDesc(prezzo);
+    }
+
 
 
 

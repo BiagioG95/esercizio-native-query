@@ -58,4 +58,9 @@ public class ProdottoController {
         return prodottoService.searchPrezzoMinimo(prezzo);
     }
 
+    @GetMapping("/order-prezzo")
+    public List<Prodotto> ordinaPrezzo(@RequestParam Double prezzo){
+        return prodottoService.orderByPrezzo(prezzo);
+    }
+
 }
