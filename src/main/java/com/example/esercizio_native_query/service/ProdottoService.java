@@ -1,5 +1,6 @@
 package com.example.esercizio_native_query.service;
 
+import com.example.esercizio_native_query.entity.CategoriaEnum;
 import com.example.esercizio_native_query.entity.Prodotto;
 import com.example.esercizio_native_query.repository.ProdottoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,11 @@ public class ProdottoService {
         } else{
             return Optional.empty();
         }
+    }
+
+    //metodo per cercare una categoria specifica
+    public List<Prodotto> searchCategoria(CategoriaEnum categoriaEnum){
+        return prodottoRepository.findByCategoriaEnum(categoriaEnum);
     }
 
 

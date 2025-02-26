@@ -1,5 +1,6 @@
 package com.example.esercizio_native_query.controller;
 
+import com.example.esercizio_native_query.entity.CategoriaEnum;
 import com.example.esercizio_native_query.entity.Prodotto;
 import com.example.esercizio_native_query.service.ProdottoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class ProdottoController {
         } else{
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/search-categoria/{categoriaEnum}")
+    public List<Prodotto> searchProdotto(@PathVariable CategoriaEnum categoriaEnum){
+        return prodottoService.searchCategoria(categoriaEnum);
     }
 
 }
