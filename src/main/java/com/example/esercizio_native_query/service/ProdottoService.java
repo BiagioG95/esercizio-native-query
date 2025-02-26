@@ -49,6 +49,11 @@ public class ProdottoService {
         return prodottoRepository.findByCategoriaEnum(categoriaEnum);
     }
 
+    // metodo che cerca prodotti il cui nome contiene una parola chiave
+    public List<Prodotto> searchNomeS(String nome){
+        return prodottoRepository.findByNomeContaining(nome);
+    }
+
 
 
 

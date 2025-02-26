@@ -44,8 +44,13 @@ public class ProdottoController {
     }
 
     @GetMapping("/search-categoria/{categoriaEnum}")
-    public List<Prodotto> searchProdotto(@PathVariable CategoriaEnum categoriaEnum){
+    public List<Prodotto> searchProdottoByCategoria(@PathVariable CategoriaEnum categoriaEnum){
         return prodottoService.searchCategoria(categoriaEnum);
+    }
+
+    @GetMapping("/search-nome-specifico")
+    public List<Prodotto> searchNomeSpecifico(@RequestParam String nome){
+        return prodottoService.searchNomeS(nome);
     }
 
 }

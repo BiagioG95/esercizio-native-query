@@ -11,4 +11,7 @@ import java.util.List;
 public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
 
     List<Prodotto> findByCategoriaEnum(CategoriaEnum categoriaEnum);
+    List<Prodotto> findByNomeContaining(String nome);
+
+
 }
