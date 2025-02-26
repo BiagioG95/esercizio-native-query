@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/prodotto")
 public class ProdottoController {
@@ -23,4 +26,20 @@ public class ProdottoController {
     public Prodotto deleteProdotto(@RequestBody Prodotto prodotto){
         return prodottoService.deleteProdotto(prodotto);
     }
+
+    @GetMapping("/select-all")
+    public List<Prodotto> getAllProdotti(){
+        return prodottoService.getAllProdotti();
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Prodotto> updateProdotto(@PathVariable Long id, @RequestBody Prodotto prodotto){
+        Optional<Prodotto> updateProdotto = prodottoService.updateProdotto(id,prodotto);
+        if(updateProdotto.isPresent()){
+            return ResponseEntity.ok(updateProdotto.get());
+        } else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
