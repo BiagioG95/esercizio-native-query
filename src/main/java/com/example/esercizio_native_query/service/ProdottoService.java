@@ -54,6 +54,11 @@ public class ProdottoService {
         return prodottoRepository.findByNomeContaining(nome);
     }
 
+    //metodo per trovare prodotti con prezzo minore di un valore dato
+    public List<Prodotto> searchPrezzoMinimo(Double prezzo){
+        return prodottoRepository.findByPrezzoLessThan(prezzo);
+    }
+
 
 
 

@@ -53,4 +53,9 @@ public class ProdottoController {
         return prodottoService.searchNomeS(nome);
     }
 
+    @GetMapping("/search-prezzo-minimo")
+    public List<Prodotto> searchPrezzoMinimo(@RequestParam Double prezzo){
+        return prodottoService.searchPrezzoMinimo(prezzo);
+    }
+
 }
