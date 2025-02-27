@@ -63,4 +63,10 @@ public class ProdottoController {
         return prodottoService.orderByPrezzo(prezzo);
     }
 
+
+    @GetMapping("/saluto")
+    public String saluto(){
+        return "Hello, world";
+    }
+
 }
