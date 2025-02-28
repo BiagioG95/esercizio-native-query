@@ -14,7 +14,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,14 +22,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
 import org.springframework.http.MediaType;
-
-
+import java.util.Collections;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Optional;
+import static org.mockito.ArgumentMatchers.anyLong;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -85,6 +84,44 @@ class EsercizioNativeQueryApplicationTests {
 						.andExpect(jsonPath("$.nome").value("Test Prodotto")); // controllo opzionale
 
 	}
+
+	@Test
+	public void testGetAllProdotti() throws Exception {
+		when(prodottoService.getAllProdotti()).thenReturn(Collections.singletonList(prodotto));
+
+		mockMvc.perform(get("/prodotto/select-all"))
+				.andDo(print())
+				.andExpect(status().isOk());
+
+	}
+
+	@Test
+	public void testUpdateProdotto() throws Exception {
+		when(prodottoService.updateProdotto(anyLong(), any(Prodotto.class))).thenReturn(Optional.of(prodotto));
+
+		mockMvc.perform(put("/prodotto/update/1")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(prodotto)))
+						.andDo(print())
+						.andExpect(status().isOk())
+						.andExpect(jsonPath("$.nome").value("Test Prodotto"));
+
+	}
+
+	@Test
+	public void testDeleteProdotto() throws Exception {
+		when(prodottoService.deleteProdotto(any(Prodotto.class))).thenReturn(prodotto);
+
+		mockMvc.perform(delete("/prodotto/delete")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(prodotto)))
+				   		.andDo(print())
+						.andExpect(status().isOk())
+						.andExpect(jsonPath("$.nome").value("Test Prodotto"));
+
+	}
+
+
 
 
 
