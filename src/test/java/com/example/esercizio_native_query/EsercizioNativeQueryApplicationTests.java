@@ -173,7 +173,12 @@ class EsercizioNativeQueryApplicationTests {
 
     @Test
     public void testSearchNomeSpecifico() throws Exception{
-
+        when(prodottoService.searchNomeS("Test Prodotto")).thenReturn(Collections.singletonList(prodotto));
+        mockMvc.perform(get("/prodotto/search-nome-specifico")
+                        .param("nome", "Test Prodotto"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringWhiteSpace("Test Prodotto")));
 
 
 
