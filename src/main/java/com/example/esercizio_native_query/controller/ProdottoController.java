@@ -63,10 +63,14 @@ public class ProdottoController {
         return prodottoService.orderByPrezzo(prezzo);
     }
 
-
-    @GetMapping("/saluto")
-    public String saluto(){
-        return "Hello, world";
+    @GetMapping("/cerca-per-id/{id}")
+    public ResponseEntity<Optional<Prodotto>> cercaPerId(@PathVariable Long id){
+        Optional<Prodotto> prodottoOptional = prodottoService.cercaPerId(id);
+        if (prodottoOptional.isPresent()){
+            return ResponseEntity.ok(prodottoOptional);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

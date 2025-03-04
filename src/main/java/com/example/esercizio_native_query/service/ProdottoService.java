@@ -44,6 +44,15 @@ public class ProdottoService {
         }
     }
 
+    public Optional<Prodotto> cercaPerId(Long id) {
+        Optional<Prodotto> prodottoOptional = prodottoRepository.findById(id);
+        if (prodottoOptional.isPresent()) {
+            return prodottoOptional;
+        } else {
+            return Optional.empty();
+        }
+    }
+
     //metodo per cercare una categoria specifica
     public List<Prodotto> searchCategoria(CategoriaEnum categoriaEnum){
         return prodottoRepository.findByCategoriaEnum(categoriaEnum);
@@ -63,6 +72,10 @@ public class ProdottoService {
     public List<Prodotto> orderByPrezzo(Double prezzo){
         return prodottoRepository.findByPrezzoOrderByPrezzoDesc(prezzo);
     }
+
+
+
+
 
 
 

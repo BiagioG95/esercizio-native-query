@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.LessThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,8 +34,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.anyLong;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,7 +63,7 @@ class EsercizioNativeQueryApplicationTests {
 
         prodotto = new Prodotto();
 
-        //	prodotto.setId(1L);
+        prodotto.setId(3L);
 
         prodotto.setNome("Test Prodotto");
 
@@ -141,7 +140,6 @@ class EsercizioNativeQueryApplicationTests {
 
     }
 
-
     @Test
     public void testDeleteProdotto() throws Exception {
         when(prodottoService.deleteProdotto(any(Prodotto.class))).thenReturn(prodotto);
@@ -156,6 +154,28 @@ class EsercizioNativeQueryApplicationTests {
     }
 
     @Test
+    public void testCercaPerIdOk() throws Exception {
+        when(prodottoService.cercaPerId(anyLong())).thenReturn(Optional.of(prodotto));
+        mockMvc.perform(get("/prodotto/cerca-per-id/3")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(prodotto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Test Prodotto"));
+    }
+
+    @Test
+    public void testCercaPerIdNotFound() throws Exception{
+        when(prodottoService.cercaPerId(anyLong())).thenReturn(Optional.empty());
+        mockMvc.perform(get("/prodotto/cerca-per-id/4")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(prodotto)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
     public void testSearchCategoria() throws Exception {
 
         CategoriaEnum categoria = CategoriaEnum.ELETTRONICA;
@@ -166,7 +186,7 @@ class EsercizioNativeQueryApplicationTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 //Se ci sono spazi nascosti, equalToIgnoringWhiteSpace() li ignora; ho inserito questo perché sia il valore che si aspettava che quello attuale era uguale
-                // Matchers fornisce metodi per confrontare i valori nei test unitari in modo più flessibile
+                // Matchers(libreria)fornisce metodi per confrontare i valori nei test unitari in modo più flessibile
                 .andExpect(jsonPath("$[0].categoriaEnum").value(Matchers.equalToIgnoringWhiteSpace(categoria.name())));
 
     }
@@ -179,35 +199,25 @@ class EsercizioNativeQueryApplicationTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringWhiteSpace("Test Prodotto")));
-
-
-
     }
-
-
-
-
 
 
 
     @Test
-    void contextLoads() {
-        assertThat(prodottoController).isNotNull();
+    public void testSearchPrezzoMinimo() throws Exception{
+        when(prodottoService.searchPrezzoMinimo(101.00)).thenReturn(Collections.singletonList(prodotto));
+        mockMvc.perform(get("/prodotto/search-prezzo-minimo")
+                        .param("prezzo", "101.00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].prezzo").value(100.00));
     }
 
-    @Test
-    void restTemplateTest() {
-        // this perché abbiamo fatto autowired
-        String output = this.testRestTemplate.getForObject("http://localhost:" + port + "/prodotto" + "/saluto", String.class);
-        assertThat(output).contains("Hello, world");
 
-    }
 
-    @Test
-    public void testMockMvc() throws Exception {
-        this.mockMvc.perform(get("/prodotto/saluto")).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hello, world")));
-    }
+
+
+
 
 
 }
