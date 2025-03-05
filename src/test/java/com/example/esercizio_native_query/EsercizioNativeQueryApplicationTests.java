@@ -180,7 +180,7 @@ class EsercizioNativeQueryApplicationTests {
     }
 
     @Test
-    public void testSearchCategoria() throws Exception {
+    public void testSearchCategoriaIsOk() throws Exception {
 
         CategoriaEnum categoria = CategoriaEnum.ELETTRONICA;
 
@@ -196,7 +196,20 @@ class EsercizioNativeQueryApplicationTests {
     }
 
     @Test
-    public void testSearchNomeSpecifico() throws Exception{
+    public void testSearchCategoriaIsEmpty() throws Exception{
+        CategoriaEnum categoria = CategoriaEnum.ELETTRONICA;
+        when(prodottoService.searchCategoria(categoria)).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/search-categoria/ELETTRONICA"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
+
+
+    }
+
+    @Test
+    public void testSearchNomeSpecificoIsOk() throws Exception{
         when(prodottoService.searchNomeS("Test Prodotto")).thenReturn(Collections.singletonList(prodotto));
         mockMvc.perform(get("/prodotto/search-nome-specifico")
                         .param("nome", "Test Prodotto"))
@@ -205,9 +218,19 @@ class EsercizioNativeQueryApplicationTests {
                 .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringWhiteSpace("Test Prodotto")));
     }
 
+    @Test
+    public void testSearchNomeSpecificoIsEmpty() throws Exception{
+        when(prodottoService.searchNomeS("Test Prodotto")).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/search-nome-specifico")
+                        .param("nome", "Test Prodotto"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
+    }
+
     // dobbiamo testare che il primo elemento della lista sia minore del prezzo che inseriamo
     // per fare questo dobbiamo confrontare che il primo valore della lista sia minore della costante PREZZOMINIMO
-
     @Test
     public void testSearchPrezzoMinimoIsOK() throws Exception{
         when(prodottoService.searchPrezzoMinimo(PREZZOMINIMO)).thenReturn(Collections.singletonList(prodotto));
@@ -233,8 +256,7 @@ class EsercizioNativeQueryApplicationTests {
 
 
     @Test
-    public void testOrderByPrezzo() throws Exception{
-
+    public void testOrderByPrezzoIsOk() throws Exception{
         when(prodottoService.orderByPrezzo(100.00)).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
         mockMvc.perform(get("/prodotto/order-prezzo")
                 .param("prezzo", "100.00"))
@@ -242,6 +264,18 @@ class EsercizioNativeQueryApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[1].id").value(7L))
                 .andExpect(jsonPath("$[0].id").value(3L));
+
+    }
+
+    @Test
+    public void testOrderByPrezzoIsEmpty() throws Exception{
+        when(prodottoService.orderByPrezzo(100.00)).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/order-prezzo")
+                        .param("prezzo", "100.00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
 
     }
 
