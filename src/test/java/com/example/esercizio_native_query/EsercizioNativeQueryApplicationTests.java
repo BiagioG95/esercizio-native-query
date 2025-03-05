@@ -27,18 +27,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 
-import java.util.Collections;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.Optional;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class EsercizioNativeQueryApplicationTests {
+    public static final double PREZZOMINIMO = 100.00;
+    public static final double PREZZOMINIMOISEMPTY = 1.0;
     @Autowired
     private ProdottoController prodottoController;
     @Autowired
@@ -69,7 +71,7 @@ class EsercizioNativeQueryApplicationTests {
 
         prodotto.setCategoriaEnum(CategoriaEnum.ELETTRONICA);
 
-        prodotto.setPrezzo(100.0);
+        prodotto.setPrezzo(99.00);
 
         prodotto.setDescrizione("Descrizione test");
 
@@ -81,11 +83,13 @@ class EsercizioNativeQueryApplicationTests {
 
         prodottoNotFound.setCategoriaEnum(CategoriaEnum.ELETTRONICA);
 
-        prodottoNotFound.setPrezzo(10.0);
+        prodottoNotFound.setPrezzo(95.00);
 
         prodottoNotFound.setDescrizione("Descrizione test0");
-
     }
+
+
+
 
 
     @Test
@@ -201,16 +205,44 @@ class EsercizioNativeQueryApplicationTests {
                 .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringWhiteSpace("Test Prodotto")));
     }
 
+    // dobbiamo testare che il primo elemento della lista sia minore del prezzo che inseriamo
+    // per fare questo dobbiamo confrontare che il primo valore della lista sia minore della costante PREZZOMINIMO
+
+    @Test
+    public void testSearchPrezzoMinimoIsOK() throws Exception{
+        when(prodottoService.searchPrezzoMinimo(PREZZOMINIMO)).thenReturn(Collections.singletonList(prodotto));
+        mockMvc.perform(get("/prodotto/search-prezzo-minimo")
+                        .param("prezzo", String.valueOf(PREZZOMINIMO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].prezzo").value(Matchers.lessThan(PREZZOMINIMO)));
+    }
+
+    @Test
+    public void testSearchPrezzoMinimoIsEmpty() throws Exception {
+        // Simuliamo un risultato vuoto da prodottoService
+        when(prodottoService.searchPrezzoMinimo(PREZZOMINIMO)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/prodotto/search-prezzo-minimo")
+                        .param("prezzo", String.valueOf(PREZZOMINIMO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                //in questo caso andiamo a verificare che la lunghezza della lista sia vuota
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 
 
     @Test
-    public void testSearchPrezzoMinimo() throws Exception{
-        when(prodottoService.searchPrezzoMinimo(101.00)).thenReturn(Collections.singletonList(prodotto));
-        mockMvc.perform(get("/prodotto/search-prezzo-minimo")
-                        .param("prezzo", "101.00"))
+    public void testOrderByPrezzo() throws Exception{
+
+        when(prodottoService.orderByPrezzo(100.00)).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/order-prezzo")
+                .param("prezzo", "100.00"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].prezzo").value(100.00));
+                .andExpect(jsonPath("$[1].id").value(7L))
+                .andExpect(jsonPath("$[0].id").value(3L));
+
     }
 
 

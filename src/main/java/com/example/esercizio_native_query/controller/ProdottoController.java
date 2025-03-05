@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.ProtectionDomain;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,26 +44,6 @@ public class ProdottoController {
         }
     }
 
-    @GetMapping("/search-categoria/{categoriaEnum}")
-    public List<Prodotto> searchProdottoByCategoria(@PathVariable CategoriaEnum categoriaEnum){
-        return prodottoService.searchCategoria(categoriaEnum);
-    }
-
-    @GetMapping("/search-nome-specifico")
-    public List<Prodotto> searchNomeSpecifico(@RequestParam String nome){
-        return prodottoService.searchNomeS(nome);
-    }
-
-    @GetMapping("/search-prezzo-minimo")
-    public List<Prodotto> searchPrezzoMinimo(@RequestParam Double prezzo){
-        return prodottoService.searchPrezzoMinimo(prezzo);
-    }
-
-    @GetMapping("/order-prezzo")
-    public List<Prodotto> ordinaPrezzo(@RequestParam Double prezzo){
-        return prodottoService.orderByPrezzo(prezzo);
-    }
-
     @GetMapping("/cerca-per-id/{id}")
     public ResponseEntity<Optional<Prodotto>> cercaPerId(@PathVariable Long id){
         Optional<Prodotto> prodottoOptional = prodottoService.cercaPerId(id);
@@ -72,5 +53,31 @@ public class ProdottoController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/search-categoria/{categoriaEnum}")
+    public ResponseEntity<List<Prodotto>> searchProdottoByCategoria(@PathVariable CategoriaEnum categoriaEnum){
+        List<Prodotto> list = prodottoService.searchCategoria(categoriaEnum);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/search-nome-specifico")
+    public ResponseEntity<List<Prodotto>> searchNomeSpecifico(@RequestParam String nome){
+        List<Prodotto> list = prodottoService.searchNomeS(nome);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/search-prezzo-minimo")
+    public ResponseEntity<List<Prodotto>> searchPrezzoMinimo(@RequestParam Double prezzo){
+        List<Prodotto> list = prodottoService.searchPrezzoMinimo(prezzo);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/order-prezzo")
+    public ResponseEntity<List<Prodotto>> ordinaPrezzo(@RequestParam Double prezzo){
+        List<Prodotto> list = prodottoService.orderByPrezzo(prezzo);
+        return ResponseEntity.ok(list);
+    }
+
+
 
 }
