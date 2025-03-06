@@ -78,6 +78,11 @@ public class ProdottoService {
         return prodottoRepository.findByCategoriaEnumAndPrezzoLessThan(categoriaEnum, prezzo);
     }
 
+    //query-nativa che conta quanti prodotti ci sono per categoria
+    public Long countCategoria(CategoriaEnum categoriaEnum){
+        return prodottoRepository.findByCategoriaEnumCount(categoriaEnum.name());
+    }
+
 
 
 

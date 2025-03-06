@@ -84,6 +84,12 @@ public class ProdottoController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/count-categoria")
+    public ResponseEntity<Long> countCategoria(@RequestParam CategoriaEnum categoriaEnum){
+        Long list = prodottoService.countCategoria(categoriaEnum);
+        return ResponseEntity.ok(list);
+    }
+
 
 
 }

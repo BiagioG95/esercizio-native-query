@@ -6,12 +6,14 @@ public enum CategoriaEnum {
     ALIMENTARI("alimentari"),
     CASA("casa");
 
-    private final String descrizioneC;
+    private final String descrizione;
 
-    CategoriaEnum(String descrizioneC){this.descrizioneC = descrizioneC;}
+    CategoriaEnum(String descrizione){
+        this.descrizione = descrizione;
+    }
 
-    public String getDescrizioneC() {
-        return descrizioneC;
+    public String getDescrizione() {
+        return descrizione;
     }
 
 
