@@ -78,6 +78,12 @@ public class ProdottoController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/search-categoria-prezzo")
+    public ResponseEntity<List<Prodotto>> searchByCategoriaAndPrezzo(@RequestParam CategoriaEnum categoriaEnum, @RequestParam Double prezzo){
+        List<Prodotto> list = prodottoService.searchByCategoriaAndPrezzo(categoriaEnum, prezzo);
+        return ResponseEntity.ok(list);
+    }
+
 
 
 }

@@ -73,6 +73,11 @@ public class ProdottoService {
         return prodottoRepository.findByPrezzoOrderByPrezzoDesc(prezzo);
     }
 
+    // metodo he trova prodotti di una categoria con prezzo sotto una soglia
+    public List<Prodotto> searchByCategoriaAndPrezzo(CategoriaEnum categoriaEnum, Double prezzo){
+        return prodottoRepository.findByCategoriaEnumAndPrezzoLessThan(categoriaEnum, prezzo);
+    }
+
 
 
 

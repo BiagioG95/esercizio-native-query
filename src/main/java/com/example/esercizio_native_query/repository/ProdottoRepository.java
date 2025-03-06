@@ -14,6 +14,7 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
     List<Prodotto> findByNomeContaining(String nome);
     List<Prodotto> findByPrezzoLessThan(Double prezzo);
     List<Prodotto> findByPrezzoOrderByPrezzoDesc(Double prezzo);
+    List<Prodotto> findByCategoriaEnumAndPrezzoLessThan(CategoriaEnum categoriaEnum, Double prezzo);
 
 
 }

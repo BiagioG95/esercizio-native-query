@@ -279,6 +279,31 @@ class EsercizioNativeQueryApplicationTests {
 
     }
 
+    @Test
+    public void testSearchByCategoriaAndPrezzoIsOK() throws Exception{
+        when(prodottoService.searchByCategoriaAndPrezzo(CategoriaEnum.ELETTRONICA, 99.00)).thenReturn(Collections.singletonList(prodotto));
+        mockMvc.perform(get("/prodotto/search-categoria-prezzo")
+                .param("categoriaEnum", CategoriaEnum.ELETTRONICA.name())
+                .param("prezzo", "99.00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(3L));
+
+
+    }
+
+    @Test
+    public void testSearchByCategoriaAndPrezzoIsEmpty() throws Exception{
+        when(prodottoService.searchByCategoriaAndPrezzo(CategoriaEnum.ELETTRONICA, 99.00)).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/search-categoria-prezzo")
+                        .param("categoriaEnum", CategoriaEnum.ELETTRONICA.name())
+                        .param("prezzo", "99.00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
+    }
+
 
 
 
