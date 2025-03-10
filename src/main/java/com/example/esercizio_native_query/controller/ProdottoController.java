@@ -90,6 +90,30 @@ public class ProdottoController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/top5-disponibili")
+    public ResponseEntity<List<Prodotto>> top5QuantitaDisponibile(){
+        List<Prodotto> list = prodottoService.top5QuantitaDisponibile();
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/recenti")
+    public ResponseEntity<List<Prodotto>> prodottiUltimaSettimana(){
+        List<Prodotto> list = prodottoService.prodottiUltimaSettimana();
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/nome-or-descrizione")
+    public ResponseEntity<List<Prodotto>> prodottiOrDescrizione(@RequestParam String nome, @RequestParam String descrizione){
+        List<Prodotto> list = prodottoService.prodottiOrDescrizione(nome, descrizione);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/prezzo-medio-per-categoria")
+    public ResponseEntity<Double> prezzoMedioCategoria(@RequestParam CategoriaEnum categoriaEnum){
+       Double prezzoMedio = prodottoService.prezzoMedioByCategoria(categoriaEnum);
+        return ResponseEntity.ok(prezzoMedio);
+    }
+
 
 
 }

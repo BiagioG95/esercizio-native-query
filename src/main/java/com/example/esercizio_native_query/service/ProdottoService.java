@@ -78,9 +78,29 @@ public class ProdottoService {
         return prodottoRepository.findByCategoriaEnumAndPrezzoLessThan(categoriaEnum, prezzo);
     }
 
-    //query-nativa che conta quanti prodotti ci sono per categoria
+    // query-nativa che conta quanti prodotti ci sono per categoria
     public Long countCategoria(CategoriaEnum categoriaEnum){
         return prodottoRepository.findByCategoriaEnumCount(categoriaEnum.name());
+    }
+
+    // query-native che trova i 5 prodotti con la maggiore quantità disponibile
+    public List<Prodotto> top5QuantitaDisponibile(){
+        return prodottoRepository.findByTop5ByQuantitaDisponibile();
+    }
+
+    // query nativa che trova i prodotti aggiunti nell'ultima settimana
+    public List<Prodotto> prodottiUltimaSettimana(){
+        return prodottoRepository.findByProdottoUltimaSettimana();
+    }
+
+    // query nativa che cerca prodotti il cui nome o descrizione contiene una parola chiave
+    public List<Prodotto> prodottiOrDescrizione(String nome, String descrizione){
+        return prodottoRepository.findByNomeOrDescrizione(nome, descrizione);
+    }
+
+    // query nativa che calcola il prezzo medio dei prodotti per ogni categoria
+    public Double prezzoMedioByCategoria(CategoriaEnum categoriaEnum){
+        return prodottoRepository.findPrezzoMedio(categoriaEnum.name());
     }
 
 

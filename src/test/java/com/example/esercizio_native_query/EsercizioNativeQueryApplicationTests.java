@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
 import java.util.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -65,6 +66,10 @@ class EsercizioNativeQueryApplicationTests {
 
         prodotto.setDescrizione("Descrizione test");
 
+        prodotto.setQuantitaDisponibile(15);
+        prodotto.setDataCreazione(LocalDate.of(2025, 2, 13));
+
+
         prodottoNotFound = new Prodotto();
 
         prodottoNotFound.setId(7L);
@@ -76,6 +81,10 @@ class EsercizioNativeQueryApplicationTests {
         prodottoNotFound.setPrezzo(95.00);
 
         prodottoNotFound.setDescrizione("Descrizione test0");
+
+        prodottoNotFound.setQuantitaDisponibile(20);
+
+        prodottoNotFound.setDataCreazione(LocalDate.of(2025, 3, 5));
     }
 
 
@@ -95,7 +104,7 @@ class EsercizioNativeQueryApplicationTests {
                 // al json dell'oggetto che abbiamo creato
                 .andDo(print())
                 .andExpect(status().isOk())// controlliamo che il codice status sia ok
-                .andExpect(jsonPath("$.nome").value("Test Prodotto")); // controllo opzionale
+                .andExpect(jsonPath("$.nome").value(prodotto.getNome())); // controllo opzionale
 
     }
 
@@ -118,7 +127,7 @@ class EsercizioNativeQueryApplicationTests {
                         .content(objectMapper.writeValueAsString(prodotto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Test Prodotto"));
+                .andExpect(jsonPath("$.nome").value(prodotto.getNome()));
 
     }
 
@@ -143,19 +152,19 @@ class EsercizioNativeQueryApplicationTests {
                         .content(objectMapper.writeValueAsString(prodotto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Test Prodotto"));
+                .andExpect(jsonPath("$.nome").value(prodotto.getNome()));
 
     }
 
     @Test
     public void testCercaPerIdOk() throws Exception {
         when(prodottoService.cercaPerId(anyLong())).thenReturn(Optional.of(prodotto));
-        mockMvc.perform(get("/prodotto/cerca-per-id/3")
+        mockMvc.perform(get("/prodotto/cerca-per-id/" + prodotto.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(prodotto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Test Prodotto"));
+                .andExpect(jsonPath("$.nome").value(prodotto.getNome()));
     }
 
     @Test
@@ -205,7 +214,7 @@ class EsercizioNativeQueryApplicationTests {
                         .param("nome", "Test Prodotto"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringWhiteSpace("Test Prodotto")));
+                .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringWhiteSpace(prodotto.getNome())));
     }
 
     @Test
@@ -252,8 +261,8 @@ class EsercizioNativeQueryApplicationTests {
                 .param("prezzo", "100.00"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[1].id").value(7L))
-                .andExpect(jsonPath("$[0].id").value(3L));
+                .andExpect(jsonPath("$[1].id").value(prodottoNotFound.getId()))
+                .andExpect(jsonPath("$[0].id").value(prodotto.getId()));
 
     }
 
@@ -271,20 +280,20 @@ class EsercizioNativeQueryApplicationTests {
 
     @Test
     public void testSearchByCategoriaAndPrezzoIsOK() throws Exception{
-        when(prodottoService.searchByCategoriaAndPrezzo(CategoriaEnum.ELETTRONICA, 99.00)).thenReturn(Collections.singletonList(prodotto));
+        when(prodottoService.searchByCategoriaAndPrezzo(CategoriaEnum.ELETTRONICA, prodotto.getPrezzo())).thenReturn(Collections.singletonList(prodotto));
         mockMvc.perform(get("/prodotto/search-categoria-prezzo")
                 .param("categoriaEnum", CategoriaEnum.ELETTRONICA.name())
                 .param("prezzo", "99.00"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(3L));
+                .andExpect(jsonPath("$[0].id").value(prodotto.getId()));
 
 
     }
 
     @Test
     public void testSearchByCategoriaAndPrezzoIsEmpty() throws Exception{
-        when(prodottoService.searchByCategoriaAndPrezzo(CategoriaEnum.ELETTRONICA, 99.00)).thenReturn(Collections.emptyList());
+        when(prodottoService.searchByCategoriaAndPrezzo(CategoriaEnum.ELETTRONICA, prodotto.getPrezzo())).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/prodotto/search-categoria-prezzo")
                         .param("categoriaEnum", CategoriaEnum.ELETTRONICA.name())
                         .param("prezzo", "99.00"))
@@ -317,10 +326,87 @@ class EsercizioNativeQueryApplicationTests {
     }
 
 
+    @Test
+    public void testTop5ByQuantitaDisponibileIsOk() throws Exception{
+        when(prodottoService.top5QuantitaDisponibile()).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/top5-disponibili"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[1].id").value(prodottoNotFound.getId()))
+                .andExpect(jsonPath("$[0].id").value(prodotto.getId()));
+    }
 
+    @Test
+    public void testTop5ByQuantitaDisponibileIsEmpty() throws Exception{
+        when(prodottoService.top5QuantitaDisponibile()).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/top5-disponibili"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 
+    @Test
+    public void testProdottoUltimaSettimanaIsOk() throws Exception{
+        when(prodottoService.prodottiUltimaSettimana()).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/recenti"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[1].nome").value(prodottoNotFound.getNome()))
+                .andExpect(jsonPath("$[0].nome").value(prodotto.getNome()));
+    }
 
+    @Test
+    public void testProdottoUltimaSettimanaIsEmpty() throws Exception {
+        when(prodottoService.prodottiUltimaSettimana()).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/recenti"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 
+    @Test
+    public void testNomeOrDescrizioneIsOk() throws Exception{
+        when(prodottoService.prodottiOrDescrizione("Test", "Descrizione")).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/nome-or-descrizione")
+                        .param("nome", "Test")
+                        .param("descrizione", "Descrizione"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[1].nome").value("Test Prodotto0"))
+                .andExpect(jsonPath("$[0].nome").value("Test Prodotto"));
+    }
+
+    @Test
+    public void testNomeOrDescrizioneIsEmpty() throws Exception{
+        when(prodottoService.prodottiOrDescrizione("Test", "Descrizione")).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/nome-or-descrizione")
+                .param("nome", "Test")
+                .param("descrizione", "Descrizione"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    public void testPrezzoMedioIsOk() throws Exception{
+        when(prodottoService.prezzoMedioByCategoria(CategoriaEnum.ELETTRONICA)).thenReturn(97.00);
+        mockMvc.perform(get("/prodotto/prezzo-medio-per-categoria")
+                .param("categoriaEnum",CategoriaEnum.ELETTRONICA.name()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(97.0));
+    }
+
+    @Test
+    public void testPrezzoMedioIsEmpty() throws Exception{
+        when(prodottoService.prezzoMedioByCategoria(CategoriaEnum.ELETTRONICA)).thenReturn(0D);
+        mockMvc.perform(get("/prodotto/prezzo-medio-per-categoria")
+                        .param("categoriaEnum",CategoriaEnum.ELETTRONICA.name()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(0D));
+    }
 
 
 }
