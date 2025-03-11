@@ -4,9 +4,9 @@ import com.example.esercizio_native_query.entity.CategoriaEnum;
 import com.example.esercizio_native_query.entity.Prodotto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -32,6 +32,13 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
 
     @Query(value = "select avg(prezzo) AS prezzo_medio from prodotto where prodotto.categoria = ?1", nativeQuery = true)
     Double findPrezzoMedio(String categoriaEnum);
+    // Livello medio custom query
+
+    // Prodotti creati dopo una certa data
+    List<Prodotto> findByDataCreazioneAfter(LocalDate dataCreazione);
+    List<Prodotto> findByPrezzoBetween(Double prezzoMinimo, Double prezzoMassimo);
+
+
 
 
 

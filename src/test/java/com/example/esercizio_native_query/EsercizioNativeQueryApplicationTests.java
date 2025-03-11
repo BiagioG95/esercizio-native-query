@@ -85,6 +85,8 @@ class EsercizioNativeQueryApplicationTests {
         prodottoNotFound.setQuantitaDisponibile(20);
 
         prodottoNotFound.setDataCreazione(LocalDate.of(2025, 3, 5));
+
+
     }
 
 
@@ -122,7 +124,7 @@ class EsercizioNativeQueryApplicationTests {
     public void testUpdateProdottoOk() throws Exception {
         when(prodottoService.updateProdotto(anyLong(), any(Prodotto.class))).thenReturn(Optional.of(prodotto));
 
-        mockMvc.perform(put("/prodotto/update/1")
+        mockMvc.perform(put("/prodotto/update/" + prodotto.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(prodotto)))
                 .andDo(print())
@@ -407,6 +409,58 @@ class EsercizioNativeQueryApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(0D));
     }
+
+    // Livello medio custom query
+
+    // Prodotti creati dopo una certa data
+    @Test
+    public void testNuoviArriviIsOk() throws Exception{
+        when(prodottoService.prodottiNuoviArrivi(any(LocalDate.class))).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/nuovi-arrivi")
+                .param("dataCreazione", "2025-03-01"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].nome").value(prodotto.getNome()));
+
+    }
+
+    @Test
+    public void testNuoviArriviIsEmpty() throws Exception{
+        when(prodottoService.prodottiNuoviArrivi(any(LocalDate.class))).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/nuovi-arrivi")
+                        .param("dataCreazione", "2025-03-01"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
+
+    }
+
+    // Prodotti con prezzo compreso in un intervallo
+    @Test
+    public void testRangePrezzoIsOk() throws Exception{
+        when(prodottoService.prodottiRangePrezzo(96.0, 100.0)).thenReturn(Collections.singletonList(prodotto));
+        mockMvc.perform(get("/prodotto/range-prezzo")
+                .param("prezzoMinimo", "96")
+                .param("prezzoMassimo", "100"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nome").value(prodotto.getNome()));
+
+    }
+
+    @Test
+    public void testRangePrezzoIsEmpty() throws Exception{
+        when(prodottoService.prodottiRangePrezzo(96.0, 100.0)).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/range-prezzo")
+                        .param("prezzoMinimo", "96")
+                        .param("prezzoMassimo", "100"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
+
+    }
+
 
 
 }

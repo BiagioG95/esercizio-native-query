@@ -6,6 +6,7 @@ import com.example.esercizio_native_query.repository.ProdottoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,6 +102,18 @@ public class ProdottoService {
     // query nativa che calcola il prezzo medio dei prodotti per ogni categoria
     public Double prezzoMedioByCategoria(CategoriaEnum categoriaEnum){
         return prodottoRepository.findPrezzoMedio(categoriaEnum.name());
+    }
+
+    // Livello medio custom query
+
+    // Prodotti creati dopo una certa data
+    public List<Prodotto> prodottiNuoviArrivi(LocalDate dataCreazione){
+        return prodottoRepository.findByDataCreazioneAfter(dataCreazione);
+    }
+
+    // Prodotti con prezzo compreso in un intervallo
+    public List<Prodotto> prodottiRangePrezzo(Double prezzoMinimo, Double prezzoMassimo){
+        return prodottoRepository.findByPrezzoBetween(prezzoMinimo, prezzoMassimo);
     }
 
 

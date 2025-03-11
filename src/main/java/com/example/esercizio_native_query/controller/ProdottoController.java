@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.ProtectionDomain;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,6 +112,21 @@ public class ProdottoController {
     public ResponseEntity<Double> prezzoMedioCategoria(@RequestParam CategoriaEnum categoriaEnum){
        Double prezzoMedio = prodottoService.prezzoMedioByCategoria(categoriaEnum);
         return ResponseEntity.ok(prezzoMedio);
+    }
+
+    // Livello medio custom query
+
+    // Prodotti creati dopo una certa data
+    @GetMapping("/nuovi-arrivi")
+    public ResponseEntity<List<Prodotto>> nuoviArrivi(@RequestParam LocalDate dataCreazione){
+        List<Prodotto> prodottoList = prodottoService.prodottiNuoviArrivi(dataCreazione);
+        return ResponseEntity.ok(prodottoList);
+    }
+
+    @GetMapping("/range-prezzo")
+    public ResponseEntity<List<Prodotto>> rangePrezzo(@RequestParam Double prezzoMinimo, @RequestParam Double prezzoMassimo){
+        List<Prodotto> prodottoList = prodottoService.prodottiRangePrezzo(prezzoMinimo, prezzoMassimo);
+        return ResponseEntity.ok(prodottoList);
     }
 
 
