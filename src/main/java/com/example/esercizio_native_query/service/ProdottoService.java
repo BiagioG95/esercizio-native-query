@@ -116,6 +116,11 @@ public class ProdottoService {
         return prodottoRepository.findByPrezzoBetween(prezzoMinimo, prezzoMassimo);
     }
 
+    // Prodotti ordinati in modo decrescente
+    public List<Prodotto> decrescenteProdotti() {
+        return prodottoRepository.findAllByOrderByDataCreazioneDesc();
+    }
+
 
 
 

@@ -36,7 +36,10 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
 
     // Prodotti creati dopo una certa data
     List<Prodotto> findByDataCreazioneAfter(LocalDate dataCreazione);
+    // Range prezzo
     List<Prodotto> findByPrezzoBetween(Double prezzoMinimo, Double prezzoMassimo);
+    // Prodotti ordinati per data di creazione (decrescente)
+    List<Prodotto> findAllByOrderByDataCreazioneDesc();
 
 
 

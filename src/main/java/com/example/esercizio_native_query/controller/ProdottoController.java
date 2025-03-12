@@ -123,10 +123,18 @@ public class ProdottoController {
         return ResponseEntity.ok(prodottoList);
     }
 
+    // range prezzo
     @GetMapping("/range-prezzo")
     public ResponseEntity<List<Prodotto>> rangePrezzo(@RequestParam Double prezzoMinimo, @RequestParam Double prezzoMassimo){
         List<Prodotto> prodottoList = prodottoService.prodottiRangePrezzo(prezzoMinimo, prezzoMassimo);
         return ResponseEntity.ok(prodottoList);
+    }
+
+    // Prodotti ordinati in modo decrescente
+    @GetMapping("/prodotti-decrescente")
+    public ResponseEntity<List<Prodotto>> decrescenteProdotti(){
+        List<Prodotto> list = prodottoService.decrescenteProdotti();
+        return ResponseEntity.ok(list);
     }
 
 

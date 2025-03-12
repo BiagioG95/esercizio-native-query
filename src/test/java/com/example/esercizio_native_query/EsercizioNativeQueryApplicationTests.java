@@ -461,6 +461,29 @@ class EsercizioNativeQueryApplicationTests {
 
     }
 
+    // decrescente prodotti
+    @Test
+    public void testDecrescenteProdottiIsOk() throws Exception{
+        when(prodottoService.decrescenteProdotti()).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/prodotti-decrescente"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2));
+
+    }
+
+    @Test
+    public void testDecrescenteProdottiIsEmpty() throws Exception{
+        when(prodottoService.decrescenteProdotti()).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/prodotti-decrescente"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
+
+    }
+
+
+
 
 
 }
