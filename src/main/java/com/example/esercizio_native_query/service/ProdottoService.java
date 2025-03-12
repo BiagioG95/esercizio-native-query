@@ -121,6 +121,11 @@ public class ProdottoService {
         return prodottoRepository.findAllByOrderByDataCreazioneDesc();
     }
 
+    // test per provare delete con void passando id
+    public void deleteProdottoById(Long id) {
+        prodottoRepository.deleteById(id);
+    }
+
 
 
 

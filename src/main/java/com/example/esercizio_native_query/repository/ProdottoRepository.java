@@ -42,10 +42,6 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
     List<Prodotto> findAllByOrderByDataCreazioneDesc();
 
 
-
-
-
-
 }
 
 

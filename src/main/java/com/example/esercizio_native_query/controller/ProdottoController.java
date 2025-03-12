@@ -137,6 +137,12 @@ public class ProdottoController {
         return ResponseEntity.ok(list);
     }
 
+    // test per provare delete con void passando id
+    @DeleteMapping("/delete-by-id/{id}")
+    public void deleteProdottoById(@PathVariable Long id) {
+        prodottoService.deleteProdottoById(id);
+    }
+
 
 
 }

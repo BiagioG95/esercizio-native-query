@@ -16,6 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -482,7 +483,18 @@ class EsercizioNativeQueryApplicationTests {
 
     }
 
+    // test per provare delete con void passando id
+    @Test
+    public void testDeleteProdottoById() throws Exception {
+        doNothing().when(prodottoService).deleteProdottoById(prodotto.getId());
+        mockMvc.perform(delete("/prodotto/delete-by-id/" + prodotto.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(prodotto)))
+                .andDo(print())
+                .andExpect(status().isOk());
 
+
+    }
 
 
 
