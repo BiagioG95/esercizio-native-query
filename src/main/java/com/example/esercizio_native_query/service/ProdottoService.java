@@ -126,6 +126,11 @@ public class ProdottoService {
         prodottoRepository.deleteById(id);
     }
 
+    // Prodotti di una categoria specifica ordinati per prezzo
+    public List<Prodotto> categoriaOrderByPrezzoAsc(CategoriaEnum categoriaEnum){
+        return prodottoRepository.findByCategoriaEnumOrderByPrezzoAsc(categoriaEnum);
+    }
+
 
 
 

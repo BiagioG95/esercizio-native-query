@@ -193,7 +193,7 @@ class EsercizioNativeQueryApplicationTests {
                 .andExpect(status().isOk())
                 //Se ci sono spazi nascosti, equalToIgnoringWhiteSpace() li ignora; ho inserito questo perché sia il valore che si aspettava che quello attuale era uguale
                 // Matchers(libreria)fornisce metodi per confrontare i valori nei test unitari in modo più flessibile
-                .andExpect(jsonPath("$[0].categoriaEnum").value(Matchers.equalToIgnoringWhiteSpace(categoria.name())));
+                .andExpect(jsonPath("$[0].categoriaEnum").value(Matchers.equalToIgnoringCase(categoria.name())));
 
     }
 
@@ -470,7 +470,6 @@ class EsercizioNativeQueryApplicationTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2));
-
     }
 
     @Test
@@ -480,7 +479,6 @@ class EsercizioNativeQueryApplicationTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(0));
-
     }
 
     // test per provare delete con void passando id
@@ -492,10 +490,32 @@ class EsercizioNativeQueryApplicationTests {
                         .content(objectMapper.writeValueAsString(prodotto)))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    // Prodotti di una categoria specifica ordinati per prezzo
+    @Test
+    public void testCategoriaOrderByPrezzoAscIsOk() throws Exception{
+        when(prodottoService.categoriaOrderByPrezzoAsc(CategoriaEnum.ELETTRONICA)).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/categoria-order-by-prezzo")
+                .param("categoriaEnum",CategoriaEnum.ELETTRONICA.name()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].nome").value(prodotto.getNome()));
+    }
+
+    @Test
+    public void testCategoriaOrderByPrezzoAscIsEmpty() throws Exception{
+        when(prodottoService.categoriaOrderByPrezzoAsc(CategoriaEnum.ELETTRONICA)).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/categoria-order-by-prezzo")
+                        .param("categoriaEnum",CategoriaEnum.ELETTRONICA.name()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
+
 
 
     }
-
 
 
 }

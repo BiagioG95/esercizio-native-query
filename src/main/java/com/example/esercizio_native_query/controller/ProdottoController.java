@@ -143,6 +143,13 @@ public class ProdottoController {
         prodottoService.deleteProdottoById(id);
     }
 
+    // Prodotti di una categoria specifica ordinati per prezzo
+    @GetMapping("/categoria-order-by-prezzo")
+    public ResponseEntity<List<Prodotto>> categoriaOrderByPrezzoAsc(@RequestParam CategoriaEnum categoriaEnum){
+        List<Prodotto> list = prodottoService.categoriaOrderByPrezzoAsc(categoriaEnum);
+        return ResponseEntity.ok(list);
+    }
+
 
 
 }

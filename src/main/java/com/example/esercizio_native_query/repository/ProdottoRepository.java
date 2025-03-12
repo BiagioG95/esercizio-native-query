@@ -40,6 +40,8 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
     List<Prodotto> findByPrezzoBetween(Double prezzoMinimo, Double prezzoMassimo);
     // Prodotti ordinati per data di creazione (decrescente)
     List<Prodotto> findAllByOrderByDataCreazioneDesc();
+    // Prodotti di una categoria specifica ordinati per prezzo
+    List<Prodotto> findByCategoriaEnumOrderByPrezzoAsc(CategoriaEnum categoriaEnum);
 
 
 }
