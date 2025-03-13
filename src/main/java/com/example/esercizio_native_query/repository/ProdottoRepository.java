@@ -4,6 +4,7 @@ import com.example.esercizio_native_query.entity.CategoriaEnum;
 import com.example.esercizio_native_query.entity.Prodotto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -42,6 +43,12 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
     List<Prodotto> findAllByOrderByDataCreazioneDesc();
     // Prodotti di una categoria specifica ordinati per prezzo
     List<Prodotto> findByCategoriaEnumOrderByPrezzoAsc(CategoriaEnum categoriaEnum);
+
+    // Livello avanzato
+
+    // Ricerca con parole chiave multiple
+
+    List<Prodotto> findByCategoriaEnumIn(List<CategoriaEnum> categorie);
 
 
 }

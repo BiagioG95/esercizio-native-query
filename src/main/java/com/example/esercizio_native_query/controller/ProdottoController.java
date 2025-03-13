@@ -150,6 +150,16 @@ public class ProdottoController {
         return ResponseEntity.ok(list);
     }
 
+    // Livello avanzato
+
+    // Ricerca con parole chiave multiple
+    @GetMapping("/categoria-chiave")
+    public ResponseEntity<List<Prodotto>> categoriaEnumParolaChiave(@RequestParam List<CategoriaEnum> categoriaEnum){
+        List<Prodotto> list = prodottoService.categoriaEnumParolaChiave(categoriaEnum);
+        return ResponseEntity.ok(list);
+
+    }
+
 
 
 }

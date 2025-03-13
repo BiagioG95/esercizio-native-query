@@ -131,6 +131,13 @@ public class ProdottoService {
         return prodottoRepository.findByCategoriaEnumOrderByPrezzoAsc(categoriaEnum);
     }
 
+    // Livello avanzato
+
+    // Ricerca con parole chiave multiple
+    public List<Prodotto> categoriaEnumParolaChiave(List<CategoriaEnum> categoria){
+        return prodottoRepository.findByCategoriaEnumIn(categoria);
+    }
+
 
 
 

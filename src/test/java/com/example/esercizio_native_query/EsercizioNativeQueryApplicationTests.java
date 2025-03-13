@@ -217,7 +217,7 @@ class EsercizioNativeQueryApplicationTests {
                         .param("nome", "Test Prodotto"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringWhiteSpace(prodotto.getNome())));
+                .andExpect(jsonPath("$[0].nome").value(Matchers.equalToIgnoringCase(prodotto.getNome())));
     }
 
     @Test
@@ -516,6 +516,32 @@ class EsercizioNativeQueryApplicationTests {
 
 
     }
+
+    // Livello avanzato
+
+    // Ricerca con parole chiave multiple
+    @Test
+    public void testCategoriaEnumParolaChiaveIsOk() throws Exception{
+        when(prodottoService.categoriaEnumParolaChiave(Collections.singletonList(CategoriaEnum.ELETTRONICA))).thenReturn(Arrays.asList(prodotto, prodottoNotFound));
+        mockMvc.perform(get("/prodotto/categoria-chiave")
+                .param("categoriaEnum", CategoriaEnum.ELETTRONICA.name()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$[0].nome").value(prodotto.getNome()))
+                .andExpect(jsonPath("$[1].nome").value(prodottoNotFound.getNome()));
+    }
+
+    @Test
+    public void testCategoriaEnumParolaChiaveIsEmpty() throws Exception{
+        when(prodottoService.categoriaEnumParolaChiave(Collections.singletonList(CategoriaEnum.ELETTRONICA))).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/prodotto/categoria-chiave")
+                        .param("categoriaEnum", CategoriaEnum.ELETTRONICA.name()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
+    }
+
 
 
 }

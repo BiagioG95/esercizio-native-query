@@ -71,3 +71,12 @@ Crea una query nativa che cerca prodotti il cui nome o descrizione contiene una 
 
 Prezzo medio per categoria
 Implementa una query nativa che calcola il prezzo medio dei prodotti per ogni categoria
+
+Custom Queries (JPA):
+
+Livello Intermedio:
+
+    Prodotti creati dopo una certa. Trova tutti i prodotti creati dopo una data specifica. Utile per visualizzare i nuovi arrivi.
+    Prodotti con prezzo compreso in un intervallo: Trova tutti i prodotti con un prezzo compreso tra un valore minimo e un valore massimo specificati.
+    Prodotti ordinati per data di creazione (decrescente): Mostra i prodotti più recenti per primi.
+    Prodotti di una categoria specifica ordinati per prezzo: Combina il filtraggio per categoria con l'ordinamento per prezzo.
